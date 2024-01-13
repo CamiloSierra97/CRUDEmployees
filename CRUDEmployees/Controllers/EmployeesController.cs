@@ -6,7 +6,8 @@ using System.Net.Http;
 using System.Web.Http;
 using CRUDEmployees.Models;
 using CRUDEmployees.Models.WS;
-using Microsoft.Ajax.Utilities;
+
+
 
 namespace CRUDEmployees.Controllers
 {
@@ -59,17 +60,7 @@ namespace CRUDEmployees.Controllers
             {
                 using (DBEMPLOYEESEntities dBEMPLOYEES = new DBEMPLOYEESEntities())
                 {
-                    List<EmployeeViewModel> lst = (from e in dBEMPLOYEES.Employees
-                                                   select new EmployeeViewModel
-                                                   {
-                                                       FirstName = e.FirstName,
-                                                       Surname = e.Surname,
-                                                       Email = e.Email,
-                                                       DocumentType = e.DocumentType,
-                                                       DocumentNumber = e.DocumentNumber,
-                                                       DateOfHire = e.DateOfHire,
-                                                       Phone = e.Phone,
-                                                   }).ToList();
+                    List<EmployeeViewModel> lst = List(dBEMPLOYEES);
 
                     oR.data = lst;
                     oR.result = 1;
@@ -102,49 +93,30 @@ namespace CRUDEmployees.Controllers
             {
                 using (DBEMPLOYEESEntities dBEMPLOYEES = new DBEMPLOYEESEntities())
                 {
-                    Employees oEmployee = dBEMPLOYEES.Employees.Find(model.EmployeeId);
+                    Employees oEmployee = new Employees();
+                    oEmployee.EmployeeId = model.EmployeeId;
                     oEmployee.FirstName = model.FirstName;
                     oEmployee.Surname = model.Surname;
                     oEmployee.Email = model.Email;
                     oEmployee.DocumentType = model.DocumentType;
-                    oEmployee.DocumentType = model.DocumentType;
+                    oEmployee.DocumentNumber = model.DocumentNumber;
                     oEmployee.DateOfHire = model.DateOfHire;
                     oEmployee.Phone = model.Phone;
+                    oEmployee.SubAreaId = model.SubAreaId;
+                    oEmployee.CountryId = model.CountryId;
+                    oEmployee.IsActive = 1;
 
-                    //Validate Area and Subarea
-                    var subArea = dBEMPLOYEES.SubArea.Find(model.SubAreaId);
-                    var country = dBEMPLOYEES.Country.Find(model.CountryId);
 
-                    if (subArea != null && country != null)
-                    {
-                        oEmployee.SubAreaId = model.SubAreaId;
-                        oEmployee.CountryId = model.CountryId;
+                    dBEMPLOYEES.Employees.Add(oEmployee);
+                    dBEMPLOYEES.SaveChanges();
 
-                        dBEMPLOYEES.Entry(oEmployee).State = System.Data.Entity.EntityState.Modified;
-                        dBEMPLOYEES.SaveChanges();
+                    oR.result = 1;
+                    oR.Message = "Employee added succesfully";
 
-                        oR.result = 1;
-                        oR.Message = "Employee added succesfully";
-
-                        List<EmployeeViewModel> lst = (from e in dBEMPLOYEES.Employees
-                                                       select new EmployeeViewModel
-                                                       {
-                                                           FirstName = e.FirstName,
-                                                           Surname = e.Surname,
-                                                           Email = e.Email,
-                                                           DocumentType = e.DocumentType,
-                                                           DocumentNumber = e.DocumentNumber,
-                                                           DateOfHire = e.DateOfHire,
-                                                           Phone = e.Phone,
-                                                       }).ToList();
-                        oR.data = lst;
-                        oR.result = 1;
-                    }
-                    else
-                    {
-                        oR.Message = "Invalid SubAreaId or CountryId provided.";
-                    }
-
+                    List<EmployeeViewModel> lst = List(dBEMPLOYEES);
+                    oR.data = lst;
+                    oR.result = 1;
+                    
                 }
                 
             }
@@ -157,8 +129,8 @@ namespace CRUDEmployees.Controllers
         }
 
         //Edit Employee
-        [HttpPost]
-        public Reply EditEmployee(EmployeeViewModel model)
+        [HttpPut]
+        public Reply UpdateEmployee(EmployeeViewModel model)
         {
             Reply oR = new Reply();
             oR.result = 0;
@@ -169,53 +141,74 @@ namespace CRUDEmployees.Controllers
                 oR.Message = error;
                 return oR;
             }
+         
+            try
+            {
+                using (DBEMPLOYEESEntities dBEMPLOYEES = new DBEMPLOYEESEntities())
+                {
+                    Employees oEmployee = dBEMPLOYEES.Employees.Find(model.EmployeeId);
+                    oEmployee.EmployeeId = model.EmployeeId;
+                    oEmployee.FirstName = model.FirstName;
+                    oEmployee.Surname = model.Surname;
+                    oEmployee.Email = model.Email;
+                    oEmployee.DocumentType = model.DocumentType;
+                    oEmployee.DocumentNumber = model.DocumentNumber;
+                    oEmployee.DateOfHire = model.DateOfHire;
+                    oEmployee.Phone = model.Phone;
+                    oEmployee.SubAreaId = model.SubAreaId;
+                    oEmployee.CountryId = model.CountryId;
+                    oEmployee.IsActive = model.IsActive;
+
+                    dBEMPLOYEES.Entry(oEmployee).State = System.Data.Entity.EntityState.Modified;
+                    dBEMPLOYEES.SaveChanges();
+
+                    oR.result = 1;
+                    oR.Message = "Employee edited succesfully";
+
+                    List<EmployeeViewModel> lst = List(dBEMPLOYEES);
+                    oR.data = lst;
+                    oR.result = 1;
+
+                }
+
+            }
+            catch
+            {
+                oR.Message = "Server error, try again later";
+            }
+
+            return oR;
+        }
+
+        [HttpPatch]
+        public Reply DeleteEmployee(EmployeeViewModel model)
+        {
+            Reply oR = new Reply();
+            oR.result = 0;
+
+            //Validations
+/*            if (!Validate(model))
+            {
+                oR.Message = error;
+                return oR;
+            } */
 
             try
             {
                 using (DBEMPLOYEESEntities dBEMPLOYEES = new DBEMPLOYEESEntities())
                 {
-                    Employees oEmployee = new Employees();
-                    oEmployee.FirstName = model.FirstName;
-                    oEmployee.Surname = model.Surname;
-                    oEmployee.Email = model.Email;
-                    oEmployee.DocumentType = model.DocumentType;
-                    oEmployee.DocumentType = model.DocumentType;
-                    oEmployee.DateOfHire = model.DateOfHire;
-                    oEmployee.Phone = model.Phone;
+                    Employees oEmployee = dBEMPLOYEES.Employees.Find(model.EmployeeId);
+                    oEmployee.IsActive = 0;
 
-                    //Validate Area and Subarea
-                    var subArea = dBEMPLOYEES.SubArea.Find(model.SubAreaId);
-                    var country = dBEMPLOYEES.Country.Find(model.CountryId);
+                    dBEMPLOYEES.Entry(oEmployee).State = System.Data.Entity.EntityState.Modified;
+                    dBEMPLOYEES.SaveChanges();
 
-                    if (subArea != null && country != null)
-                    {
-                        oEmployee.SubAreaId = model.SubAreaId;
-                        oEmployee.CountryId = model.CountryId;
+                    oR.result = 1;
+                    oR.Message = "Employee deleted succesfully";
 
-                        dBEMPLOYEES.Employees.Add(oEmployee);
-                        dBEMPLOYEES.SaveChanges();
-
-                        oR.result = 1;
-                        oR.Message = "Employee added succesfully";
-
-                        List<EmployeeViewModel> lst = (from e in dBEMPLOYEES.Employees
-                                                       select new EmployeeViewModel
-                                                       {
-                                                           FirstName = e.FirstName,
-                                                           Surname = e.Surname,
-                                                           Email = e.Email,
-                                                           DocumentType = e.DocumentType,
-                                                           DocumentNumber = e.DocumentNumber,
-                                                           DateOfHire = e.DateOfHire,
-                                                           Phone = e.Phone,
-                                                       }).ToList();
-                        oR.data = lst;
-                        oR.result = 1;
-                    }
-                    else
-                    {
-                        oR.Message = "Invalid SubAreaId or CountryId provided.";
-                    }
+                    List<EmployeeViewModel> lst = List(dBEMPLOYEES);
+                    oR.data = lst;
+                    oR.result = 1;
 
                 }
 
@@ -233,16 +226,38 @@ namespace CRUDEmployees.Controllers
         public string error = "";
         private bool Validate(EmployeeViewModel model)
         {
-            if (model.FirstName.IsNullOrWhiteSpace() ||
-                model.Surname.IsNullOrWhiteSpace() ||
-                model.Email.IsNullOrWhiteSpace() ||
-                model.DocumentType.IsNullOrWhiteSpace() ||
-                model.DateOfHire.ToString().IsNullOrWhiteSpace())
+            if (string.IsNullOrWhiteSpace(model.FirstName) ||
+                string.IsNullOrWhiteSpace(model.Surname) ||
+                string.IsNullOrWhiteSpace(model.Email) ||
+                string.IsNullOrWhiteSpace(model.DocumentType) ||
+                string.IsNullOrWhiteSpace(model.DateOfHire.ToString()) ||
+                string.IsNullOrWhiteSpace(model.SubAreaId.ToString()) ||
+                string.IsNullOrWhiteSpace(model.CountryId.ToString()))
             {
                 error = "Missing Data";
                 return false;
             }
             return true;
+        }
+        private List<EmployeeViewModel> List(DBEMPLOYEESEntities dBEMPLOYEES)
+        {
+            List<EmployeeViewModel> lst = (from e in dBEMPLOYEES.Employees
+                                           where e.IsActive == 1
+                                           select new EmployeeViewModel
+                                           {
+                                               EmployeeId = e.EmployeeId,
+                                               FirstName = e.FirstName,
+                                               Surname = e.Surname,
+                                               Email = e.Email,
+                                               DocumentType = e.DocumentType,
+                                               DocumentNumber = e.DocumentNumber,
+                                               DateOfHire = e.DateOfHire,
+                                               Phone = e.Phone,
+                                               SubAreaId = e.SubAreaId,
+                                               CountryId = e.CountryId,
+                                               IsActive = e.IsActive,
+                                           }).ToList();
+            return lst;
         }
         #endregion
     }

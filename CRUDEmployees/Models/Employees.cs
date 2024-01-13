@@ -24,6 +24,7 @@ namespace CRUDEmployees.Models
         public Nullable<long> Phone { get; set; }
         public int SubAreaId { get; set; }
         public int CountryId { get; set; }
+        public Nullable<int> IsActive { get; set; }
     
         public virtual Country Country { get; set; }
         public virtual SubArea SubArea { get; set; }

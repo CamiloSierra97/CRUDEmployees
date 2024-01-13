@@ -17,5 +17,6 @@ namespace CRUDEmployees.Models.WS
         public long? Phone { get; set; }
         public int SubAreaId { get; set; }
         public int CountryId { get; set; }
+        public int? IsActive { get; set; }
     }
 }

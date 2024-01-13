@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Http;
 using Newtonsoft.Json.Serialization;
+using System.Web.Http.Cors;
 
 
 
@@ -24,10 +25,13 @@ namespace CRUDEmployees
                 defaults: new { id = RouteParameter.Optional }
             );
 
-            }
+            //Enable CORS
+            EnableCorsAttribute cors = new EnableCorsAttribute("http://localhost:5173", "*", "*");
+            config.EnableCors(cors);
+
         }
-    }
-    //Enviar todos los controllers en .json serializados
+        }
+    //Send in serialized .json
     public class Global : HttpApplication
     {
         void Application_Start(object sender, EventArgs e)
@@ -38,5 +42,9 @@ namespace CRUDEmployees
                 config.Formatters.JsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
             });
         }
+        public string error = "";
     }
-    
+}
+
+
+
