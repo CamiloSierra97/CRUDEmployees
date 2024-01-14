@@ -27,7 +27,8 @@ namespace CRUDEmployees.Models
     
         public virtual DbSet<Area> Area { get; set; }
         public virtual DbSet<Country> Country { get; set; }
-        public virtual DbSet<Employees> Employees { get; set; }
         public virtual DbSet<SubArea> SubArea { get; set; }
+        public virtual DbSet<sysdiagrams> sysdiagrams { get; set; }
+        public virtual DbSet<Employees> Employees { get; set; }
     }
 }

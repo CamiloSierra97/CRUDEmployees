@@ -20,7 +20,7 @@ namespace CRUDEmployees.Models
         public string Email { get; set; }
         public string DocumentType { get; set; }
         public long DocumentNumber { get; set; }
-        public System.DateTime DateOfHire { get; set; }
+        public string DateOfHire { get; set; }
         public Nullable<long> Phone { get; set; }
         public int SubAreaId { get; set; }
         public int CountryId { get; set; }

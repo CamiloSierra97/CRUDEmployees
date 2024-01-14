@@ -52,7 +52,7 @@ namespace CRUDEmployees.Controllers
 
         //Get all Empployees
         [HttpGet]
-        public Reply GetAllEmployees(EmployeeViewModel model)
+        public Reply GetAllEmployees(EmployeeViewModels model)
         {
             Reply oR = new Reply();
             oR.result = 0;
@@ -60,7 +60,7 @@ namespace CRUDEmployees.Controllers
             {
                 using (DBEMPLOYEESEntities dBEMPLOYEES = new DBEMPLOYEESEntities())
                 {
-                    List<EmployeeViewModel> lst = List(dBEMPLOYEES);
+                    List<EmployeeViewModels> lst = List(dBEMPLOYEES);
 
                     oR.data = lst;
                     oR.result = 1;
@@ -77,7 +77,7 @@ namespace CRUDEmployees.Controllers
 
         //Create Employee
         [HttpPost]
-        public Reply CreateEmployee(EmployeeViewModel model)
+        public Reply CreateEmployee(EmployeeViewModels model)
         {
             Reply oR = new Reply();
             oR.result = 0;
@@ -94,7 +94,6 @@ namespace CRUDEmployees.Controllers
                 using (DBEMPLOYEESEntities dBEMPLOYEES = new DBEMPLOYEESEntities())
                 {
                     Employees oEmployee = new Employees();
-                    oEmployee.EmployeeId = model.EmployeeId;
                     oEmployee.FirstName = model.FirstName;
                     oEmployee.Surname = model.Surname;
                     oEmployee.Email = model.Email;
@@ -113,7 +112,7 @@ namespace CRUDEmployees.Controllers
                     oR.result = 1;
                     oR.Message = "Employee added succesfully";
 
-                    List<EmployeeViewModel> lst = List(dBEMPLOYEES);
+                    List<EmployeeViewModels> lst = List(dBEMPLOYEES);
                     oR.data = lst;
                     oR.result = 1;
                     
@@ -130,7 +129,7 @@ namespace CRUDEmployees.Controllers
 
         //Edit Employee
         [HttpPut]
-        public Reply UpdateEmployee(EmployeeViewModel model)
+        public Reply UpdateEmployee(EmployeeViewModels model)
         {
             Reply oR = new Reply();
             oR.result = 0;
@@ -141,13 +140,12 @@ namespace CRUDEmployees.Controllers
                 oR.Message = error;
                 return oR;
             }
-         
+
             try
             {
                 using (DBEMPLOYEESEntities dBEMPLOYEES = new DBEMPLOYEESEntities())
                 {
                     Employees oEmployee = dBEMPLOYEES.Employees.Find(model.EmployeeId);
-                    oEmployee.EmployeeId = model.EmployeeId;
                     oEmployee.FirstName = model.FirstName;
                     oEmployee.Surname = model.Surname;
                     oEmployee.Email = model.Email;
@@ -157,7 +155,8 @@ namespace CRUDEmployees.Controllers
                     oEmployee.Phone = model.Phone;
                     oEmployee.SubAreaId = model.SubAreaId;
                     oEmployee.CountryId = model.CountryId;
-                    oEmployee.IsActive = model.IsActive;
+                    oEmployee.IsActive = 1;
+
 
                     dBEMPLOYEES.Entry(oEmployee).State = System.Data.Entity.EntityState.Modified;
                     dBEMPLOYEES.SaveChanges();
@@ -165,7 +164,7 @@ namespace CRUDEmployees.Controllers
                     oR.result = 1;
                     oR.Message = "Employee edited succesfully";
 
-                    List<EmployeeViewModel> lst = List(dBEMPLOYEES);
+                    List<EmployeeViewModels> lst = List(dBEMPLOYEES);
                     oR.data = lst;
                     oR.result = 1;
 
@@ -181,7 +180,7 @@ namespace CRUDEmployees.Controllers
         }
 
         [HttpPatch]
-        public Reply DeleteEmployee(EmployeeViewModel model)
+        public Reply DeleteEmployee(EmployeeViewModels model)
         {
             Reply oR = new Reply();
             oR.result = 0;
@@ -206,7 +205,7 @@ namespace CRUDEmployees.Controllers
                     oR.result = 1;
                     oR.Message = "Employee deleted succesfully";
 
-                    List<EmployeeViewModel> lst = List(dBEMPLOYEES);
+                    List<EmployeeViewModels> lst = List(dBEMPLOYEES);
                     oR.data = lst;
                     oR.result = 1;
 
@@ -221,16 +220,17 @@ namespace CRUDEmployees.Controllers
             return oR;
         }
 
+
         #region HELPERS
 
         public string error = "";
-        private bool Validate(EmployeeViewModel model)
+        private bool Validate(EmployeeViewModels model)
         {
             if (string.IsNullOrWhiteSpace(model.FirstName) ||
                 string.IsNullOrWhiteSpace(model.Surname) ||
                 string.IsNullOrWhiteSpace(model.Email) ||
                 string.IsNullOrWhiteSpace(model.DocumentType) ||
-                string.IsNullOrWhiteSpace(model.DateOfHire.ToString()) ||
+                string.IsNullOrWhiteSpace(model.DateOfHire) ||
                 string.IsNullOrWhiteSpace(model.SubAreaId.ToString()) ||
                 string.IsNullOrWhiteSpace(model.CountryId.ToString()))
             {
@@ -239,11 +239,11 @@ namespace CRUDEmployees.Controllers
             }
             return true;
         }
-        private List<EmployeeViewModel> List(DBEMPLOYEESEntities dBEMPLOYEES)
+        private List<EmployeeViewModels> List(DBEMPLOYEESEntities dBEMPLOYEES)
         {
-            List<EmployeeViewModel> lst = (from e in dBEMPLOYEES.Employees
+            List<EmployeeViewModels> lst = (from e in dBEMPLOYEES.Employees
                                            where e.IsActive == 1
-                                           select new EmployeeViewModel
+                                           select new EmployeeViewModels
                                            {
                                                EmployeeId = e.EmployeeId,
                                                FirstName = e.FirstName,
