@@ -12,6 +12,7 @@ namespace CRUDEmployees.Controllers
 {
     public class SubareasController : ApiController
     {
+        // Route https://localhost:xxxxx/api/Subareas Method GET
         [HttpGet]
         public Reply GetSubareas(SubareasViewModels model)
         {
@@ -40,6 +41,7 @@ namespace CRUDEmployees.Controllers
             return oR;
         }
 
+        // Route https://localhost:xxxxx/api/Subareas Method POST so we can search by Id
         [HttpPost]
         public Reply GetSubareaById(SubareasViewModels model)
         {

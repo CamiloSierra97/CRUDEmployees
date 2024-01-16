@@ -50,7 +50,7 @@ namespace CRUDEmployees.Controllers
                   return oR;
             } */
 
-        //Get all Empployees
+        // Route https://localhost:xxxxx/api/Employees Method GET
         [HttpGet]
         public Reply GetAllEmployees(EmployeeViewModels model)
         {
@@ -75,7 +75,7 @@ namespace CRUDEmployees.Controllers
             return oR;
         }
 
-        //Create Employee
+        // Route https://localhost:xxxxx/api/Employees Method POST
         [HttpPost]
         public Reply CreateEmployee(EmployeeViewModels model)
         {
@@ -127,7 +127,7 @@ namespace CRUDEmployees.Controllers
             return oR;
         }
 
-        //Edit Employee
+        // Route https://localhost:xxxxx/api/Employees Method PUT
         [HttpPut]
         public Reply UpdateEmployee(EmployeeViewModels model)
         {
@@ -179,18 +179,12 @@ namespace CRUDEmployees.Controllers
             return oR;
         }
 
+        // Route https://localhost:xxxxx/api/Employees Method PATCH
         [HttpPatch]
         public Reply DeleteEmployee(EmployeeViewModels model)
         {
             Reply oR = new Reply();
             oR.result = 0;
-
-            //Validations
-/*            if (!Validate(model))
-            {
-                oR.Message = error;
-                return oR;
-            } */
 
             try
             {
@@ -220,7 +214,7 @@ namespace CRUDEmployees.Controllers
             return oR;
         }
 
-
+        // Re-use code
         #region HELPERS
 
         public string error = "";

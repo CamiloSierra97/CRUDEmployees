@@ -14,9 +14,9 @@ namespace CRUDEmployees
     {
         public static void Register(HttpConfiguration config)
         {
-            // Configuración y servicios de API web
+            // API web services and configuration
 
-            // Rutas de API web
+            // API web Routes
             config.MapHttpAttributeRoutes();
 
             config.Routes.MapHttpRoute(
@@ -25,19 +25,20 @@ namespace CRUDEmployees
                 defaults: new { id = RouteParameter.Optional }
             );
 
-            //Enable CORS
+            // Enable CORS
             EnableCorsAttribute cors = new EnableCorsAttribute("http://localhost:5173", "*", "*");
             config.EnableCors(cors);
 
         }
         }
-    //Send in serialized .json
+    
     public class Global : HttpApplication
     {
         void Application_Start(object sender, EventArgs e)
         {
             GlobalConfiguration.Configure(config =>
             {
+                // Send in serialized .json
                 config.Formatters.JsonFormatter.SerializerSettings.Formatting = Newtonsoft.Json.Formatting.Indented;
                 config.Formatters.JsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
             });

@@ -12,6 +12,7 @@ namespace CRUDEmployees.Controllers
 {
     public class CountriesController : ApiController
     {
+        // Route https://localhost:xxxxx/api/Countries Method GET
         [HttpGet]
         public Reply GetCountries(CountriesViewModels model)
         {
@@ -22,11 +23,11 @@ namespace CRUDEmployees.Controllers
                 using (DBEMPLOYEESEntities dBEMPLOYEES = new DBEMPLOYEESEntities())
                 {
                     List<CountriesViewModels> lst = (from c in dBEMPLOYEES.Country
-                                                 select new CountriesViewModels
-                                                 {
-                                                     CountryId = c.CountryId,
-                                                     CountryName = c.CountryName,
-                                                 }).ToList();
+                                                     select new CountriesViewModels
+                                                     {
+                                                         CountryId = c.CountryId,
+                                                         CountryName = c.CountryName,
+                                                     }).ToList();
                     oR.data = lst;
                     oR.result = 1;
                 }
@@ -39,6 +40,7 @@ namespace CRUDEmployees.Controllers
             return oR;
         }
 
+        // Route https://localhost:xxxxx/api/Countries Method POST so we can search by Id
         [HttpPost]
         public Reply GetCountryById(CountriesViewModels model)
         {
@@ -48,20 +50,20 @@ namespace CRUDEmployees.Controllers
             {
                 using (DBEMPLOYEESEntities dBEMPLOYEES = new DBEMPLOYEESEntities())
                 {
-                    Area oArea = dBEMPLOYEES.Area.Find(model.CountryId);
-                    if (string.IsNullOrWhiteSpace(oArea.AreaId.ToString()))
+                    Country oCountry = dBEMPLOYEES.Country.Find(model.CountryId);
+                    if (string.IsNullOrWhiteSpace(oCountry.CountryId.ToString()))
                     {
                         oR.result = 0;
-                        oR.Message = "Area not found";
+                        oR.Message = "Country not found";
                     }
                     else
                     {
-                        List<CountriesViewModels> lst = (from c in dBEMPLOYEES.Country
-                                                     where c.CountryId == model.CountryId
+                        List<CountriesViewModels> lst = (from a in dBEMPLOYEES.Country
+                                                     where a.CountryId == model.CountryId
                                                      select new CountriesViewModels
                                                      {
-                                                         CountryId = c.CountryId,
-                                                         CountryName = c.CountryName,
+                                                         CountryId = a.CountryId,
+                                                         CountryName = a.CountryName,
                                                      }).ToList();
                         oR.data = lst;
                         oR.result = 1;
